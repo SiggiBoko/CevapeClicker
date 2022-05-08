@@ -11,6 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -31,7 +32,7 @@ private int cnt = 0;
         imageView.setImage(image);
         Text cntText = new Text();
 
-        imageView.setPickOnBounds(true);
+        imageView.setPickOnBounds(false);
         imageView.setOnMouseClicked((MouseEvent e) -> {
             this.cnt++;
             cntText.setText(this.cnt + "");
@@ -39,17 +40,20 @@ private int cnt = 0;
 
         BorderPane stackpane = new BorderPane();
 
-        cntText.setScaleX(20);
-        cntText.setScaleY(30);
 
-        cntText.setX(1300);
-        cntText.setY(300);
+        cntText.setScaleX(10);
+        cntText.setScaleY(20);
 
-        
+        cntText.setX(1920 / 2);
+        cntText.setY(1080 / 2 - image.getHeight() * 1.5);
+
+        imageView.setX(1920 / 2 - image.getWidth() / 2);
+        imageView.setY(1080 / 2 - image.getHeight() / 2);
 
         stackpane.getChildren().addAll(imageView, cntText);
 
-        Scene scene = new Scene(stackpane, 1720, 720);
+        Scene scene = new Scene(stackpane, 1920, 1080);
+        //scene.getStylesheets().add(".\\src\\style\\style.css");
         primaryStage.setTitle("Cevape Clicker");
         primaryStage.setScene(scene);
         primaryStage.show();
