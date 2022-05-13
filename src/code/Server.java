@@ -22,9 +22,12 @@ public class Server {
             Socket client = socket.accept();
             DataInputStream dis = new DataInputStream(client.getInputStream());
 
+            while (true){
+                String[] cmd = dis.readUTF().split(";");
 
-            while (schleife) {
-
+                switch(cmd[0]){
+                    case
+                }
             }
 
         } catch (IOException e) {
@@ -64,15 +67,55 @@ public class Server {
 
     private static void addUsr(String usr) {
         try {
+            System.out.println("Dei mama");
+            updateSQL("INSERT INTO USER (username) VALUE('" + usr + "');");
+            Server.usr = sqlReadUser();
+            System.out.println(getKey(usr));
+            updateSQL("INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(" + getKey(usr) + ", 1.0);");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static Double getMult(String usr) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String myUrl = "jdbc:mysql://localhost/cevapeDB";
+
+            Connection conn = DriverManager.getConnection(myUrl, "root", "");
+            Statement st = conn.createStatement();
+
+
+            ResultSet rs = st.executeQuery("SELECT * FROM PASSIV WHERE fk_pk_usr = " + getKey(usr));
+            return rs.getDouble("multiplikator");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static String getKey(String usr) {
+        Object temp = 0;
+
+        for (Object key : Server.usr.keySet()) {
+            if (Server.usr.get(key) == usr) {
+                temp = key;
+                break;
+            }
+        }
+        return temp.toString();
+    }
+
+    private static void updateSQL(String query){
+        try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             String myUrl = "jdbc:mysql://localhost/cevapeDB";
             Connection conn = DriverManager.getConnection(myUrl, "root", "");
             Statement st = conn.createStatement();
-
-            st.executeUpdate("INSERT INTO USER (username) VALUE('" + usr + "')");
-        } catch (Exception e) {
+            st.executeUpdate(query);
+        }catch (Exception e){
             e.printStackTrace();
         }
-        Server.usr = sqlReadUser();
     }
 }

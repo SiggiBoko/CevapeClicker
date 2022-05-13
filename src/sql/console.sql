@@ -8,7 +8,7 @@ create table if not exists USER(
 );
 
 create table if not exists PASSIV(
-    pk_passiv int primary key,
+    pk_passiv int primary key auto_increment,
     fk_pk_usr int,
     FOREIGN KEY (fk_pk_usr) references USER(pk_usr),
     multiplikator double
@@ -16,3 +16,8 @@ create table if not exists PASSIV(
 
 INSERT INTO USER
 VALUE (1, 'Bogo');
+
+INSERT INTO PASSIV
+VALUE (1, 1, 1.0);
+
+#INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(1, 1.0);

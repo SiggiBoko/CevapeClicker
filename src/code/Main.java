@@ -22,9 +22,11 @@ import java.nio.file.Paths;
 
 
 public class Main extends Application {
-    private int cnt = 0;
+    private double cnt = 0;
     private int WIDTH = 1920;
     private int HEIGHT = 1080;
+    private String USER;
+
     //public BufferedWriter wr;
 //public BufferedReader br;
     DataOutputStream dout;
@@ -66,7 +68,7 @@ public class Main extends Application {
 
         imageView.setPickOnBounds(false);
         imageView.setOnMouseClicked((MouseEvent e) -> {
-            this.cnt++;
+            this.cnt = this.cnt + 1 ;//* Server.getMult(USER);
             cntText.setText(this.cnt + "");
         });
 
@@ -95,11 +97,14 @@ public class Main extends Application {
 
         //SceneSwitcher
         loginBut.setOnAction(value -> {
-            if (Server.anmelden(usr.getText())) {
-                Server.anmelden(usr.getText());
-                stage.setScene(scene2);
-            } else {
-                login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
+            try {
+                if (Server.anmelden(usr.getText())) {
+                    dout.writeUTF("anmelden;" + usr.getText());
+                } else {
+                    login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
+                }
+            }catch (IOException e){
+                e.printStackTrace();
             }
         });
 
