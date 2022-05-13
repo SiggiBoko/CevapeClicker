@@ -11,7 +11,16 @@ import java.sql.Statement;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Server {
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
+
+public class Server extends HttpServ{
     private static int PORT_SRV = 22333;
     private static boolean schleife = true;
     private static Map<Integer, String> usr = sqlReadUser();
