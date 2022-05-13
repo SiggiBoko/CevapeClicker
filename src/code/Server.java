@@ -11,16 +11,16 @@ import java.sql.Statement;
 import java.util.Map;
 import java.util.TreeMap;
 
-import java.io.IOException;
+//import java.io.IOException;
+//
+//import javax.servlet.ServletException;
+//import javax.servlet.http.HttpServlet;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//
+//import org.json.JSONObject;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.json.JSONObject;
-
-public class Server extends HttpServ{
+public class Server{
     private static int PORT_SRV = 22333;
     private static boolean schleife = true;
     private static Map<Integer, String> usr = sqlReadUser();
@@ -35,7 +35,7 @@ public class Server extends HttpServ{
                 String[] cmd = dis.readUTF().split(";");
 
                 switch(cmd[0]){
-                    case
+
                 }
             }
 
