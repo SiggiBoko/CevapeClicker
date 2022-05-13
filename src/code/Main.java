@@ -15,19 +15,31 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.Buffer;
 import java.nio.file.Paths;
 
 
 public class Main extends Application {
-private int cnt = 0;
-private int WIDTH = 1920;
-private int HEIGHT = 1080;
+    private int cnt = 0;
+    private int WIDTH = 1920;
+    private int HEIGHT = 1080;
+    //public BufferedWriter wr;
+//public BufferedReader br;
+    DataOutputStream dout;
+    private Socket socket;
+
     @Override
-    public void start(Stage stage) throws Exception{
-        //Socket socket = new Socket("localhost", 22333);
+    public void start(Stage stage) throws Exception {
+        socket = new Socket("localhost", 22333);
+
+        try {
+            dout = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         //Scene1
         Scene scene1;
         VBox login = new VBox();
@@ -41,7 +53,6 @@ private int HEIGHT = 1080;
         login.getChildren().addAll(usr, loginBut);
 
         scene1 = new Scene(login, WIDTH, HEIGHT);
-
 
 
         //Scene2
@@ -71,8 +82,6 @@ private int HEIGHT = 1080;
         //imageView.setX(1920 / 2 - image.getWidth() / 2);
         //imageView.setY(1080 / 2 - image.getHeight() / 2);
 
-
-
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
         hBox.getChildren().add(imageView);
@@ -84,14 +93,16 @@ private int HEIGHT = 1080;
 
         scene2 = new Scene(mainVBox, HEIGHT, WIDTH);
 
-        //pane.getChildren().addAll(hBox);
-
         //SceneSwitcher
-        loginBut.setOnAction(e -> stage.setScene(scene2));
+        loginBut.setOnAction(value -> {
+            if (Server.anmelden(usr.getText())) {
+                Server.anmelden(usr.getText());
+                stage.setScene(scene2);
+            } else {
+                login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
+            }
+        });
 
-
-
-        //scene.getStylesheets().add(".\\src\\style\\style.css");
         stage.setTitle("Cevape Clicker");
         stage.setScene(scene1);
         stage.show();
