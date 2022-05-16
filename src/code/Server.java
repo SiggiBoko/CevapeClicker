@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.Map;
 import java.util.TreeMap;
 
+<<<<<<< HEAD
 /*import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -23,6 +24,17 @@ import org.json.JSONObject;
 
  */
 
+=======
+//import java.io.IOException;
+//
+//import javax.servlet.ServletException;
+//import javax.servlet.http.HttpServlet;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//
+//import org.json.JSONObject;
+
+>>>>>>> b0b94e86ba3f36bc282458f2d4e841f250b215a6
 public class Server{
     private static int PORT_SRV = 22333;
     private static boolean schleife = true;
@@ -40,6 +52,7 @@ public class Server{
                 String[] cmd = dis.readUTF().split(";");
 
                 switch(cmd[0]){
+<<<<<<< HEAD
                     case "anmelden": anmelden(cmd[1]);
                     case "anmeldenPos":
                         if(anmelden(cmd[1])){
@@ -52,6 +65,8 @@ public class Server{
                     case "getMult":
                         dout.writeInt(getMult(cmd[1]));
                         dout.flush();
+=======
+>>>>>>> b0b94e86ba3f36bc282458f2d4e841f250b215a6
 
                 }
             }
