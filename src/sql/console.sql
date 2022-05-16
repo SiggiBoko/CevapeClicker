@@ -4,20 +4,21 @@ use cevapeDB;
 
 create table if not exists USER(
     pk_usr int primary key auto_increment,
-    username varchar(10)
+    username varchar(10)gi
+                               
 );
 
 create table if not exists PASSIV(
     pk_passiv int primary key auto_increment,
     fk_pk_usr int,
     FOREIGN KEY (fk_pk_usr) references USER(pk_usr),
-    multiplikator double
+    multiplikator int
 );
 
 INSERT INTO USER
 VALUE (1, 'Bogo');
 
 INSERT INTO PASSIV
-VALUE (1, 1, 1.0);
+VALUE (1, 1, 1);
 
 #INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(1, 1.0);

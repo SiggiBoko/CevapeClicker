@@ -1,6 +1,7 @@
 package code;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,7 +12,7 @@ import java.sql.Statement;
 import java.util.Map;
 import java.util.TreeMap;
 
-import java.io.IOException;
+/*import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-public class Server extends HttpServ{
+ */
+
+public class Server{
     private static int PORT_SRV = 22333;
     private static boolean schleife = true;
     private static Map<Integer, String> usr = sqlReadUser();
@@ -30,15 +33,28 @@ public class Server extends HttpServ{
 
             Socket client = socket.accept();
             DataInputStream dis = new DataInputStream(client.getInputStream());
+            DataOutputStream dout = new DataOutputStream(client.getOutputStream());
+
 
             while (true){
                 String[] cmd = dis.readUTF().split(";");
 
                 switch(cmd[0]){
-                    case
+                    case "anmelden": anmelden(cmd[1]);
+                    case "anmeldenPos":
+                        if(anmelden(cmd[1])){
+                            dout.writeBoolean(true);
+                            dout.flush();
+                        }else {
+                            dout.writeBoolean(false);
+                            dout.flush();
+                        };
+                    case "getMult":
+                        dout.writeInt(getMult(cmd[1]));
+                        dout.flush();
+
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,18 +92,16 @@ public class Server extends HttpServ{
 
     private static void addUsr(String usr) {
         try {
-            System.out.println("Dei mama");
             updateSQL("INSERT INTO USER (username) VALUE('" + usr + "');");
             Server.usr = sqlReadUser();
-            System.out.println(getKey(usr));
-            updateSQL("INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(" + getKey(usr) + ", 1.0);");
+            updateSQL("INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(" + getKey(usr) + ", 1);");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public static Double getMult(String usr) {
+    public static Integer getMult(String usr) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String myUrl = "jdbc:mysql://localhost/cevapeDB";
@@ -95,20 +109,24 @@ public class Server extends HttpServ{
             Connection conn = DriverManager.getConnection(myUrl, "root", "");
             Statement st = conn.createStatement();
 
+            ResultSet rs = st.executeQuery("SELECT multiplikator FROM PASSIV WHERE fk_pk_usr = " + getKey(usr));
 
-            ResultSet rs = st.executeQuery("SELECT * FROM PASSIV WHERE fk_pk_usr = " + getKey(usr));
-            return rs.getDouble("multiplikator");
+            if(rs.next()) {
+                return rs.getInt("multiplikator");
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+
         }
+        return null;
     }
 
     private static String getKey(String usr) {
         Object temp = 0;
 
         for (Object key : Server.usr.keySet()) {
-            if (Server.usr.get(key) == usr) {
+
+            if (Server.usr.get(Integer.parseInt(key.toString())).equals(usr)) {
                 temp = key;
                 break;
             }
@@ -116,15 +134,12 @@ public class Server extends HttpServ{
         return temp.toString();
     }
 
-    private static void updateSQL(String query){
-        try{
+    private static void updateSQL(String query) throws Exception{
             Class.forName("com.mysql.cj.jdbc.Driver");
             String myUrl = "jdbc:mysql://localhost/cevapeDB";
             Connection conn = DriverManager.getConnection(myUrl, "root", "");
             Statement st = conn.createStatement();
             st.executeUpdate(query);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
     }
 }

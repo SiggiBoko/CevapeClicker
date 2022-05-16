@@ -22,14 +22,14 @@ import java.nio.file.Paths;
 
 
 public class Main extends Application {
-    private double cnt = 0;
+    private int cnt = 0;
     private int WIDTH = 1920;
     private int HEIGHT = 1080;
     private String USER;
+    private int MULT;
 
-    //public BufferedWriter wr;
-//public BufferedReader br;
     DataOutputStream dout;
+    DataInputStream dit;
     private Socket socket;
 
     @Override
@@ -38,6 +38,7 @@ public class Main extends Application {
 
         try {
             dout = new DataOutputStream(socket.getOutputStream());
+            dit = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,12 +69,15 @@ public class Main extends Application {
 
         imageView.setPickOnBounds(false);
         imageView.setOnMouseClicked((MouseEvent e) -> {
-            this.cnt = this.cnt + 1 ;//* Server.getMult(USER);
-            cntText.setText(this.cnt + "");
+            try {
+
+                this.cnt += 1 * MULT;
+
+                cntText.setText(this.cnt + "");
+            }catch (Exception s){
+                s.printStackTrace();
+            }
         });
-
-        Pane pane = new Pane();
-
 
         cntText.setScaleX(10);
         cntText.setScaleY(20);
@@ -98,8 +102,17 @@ public class Main extends Application {
         //SceneSwitcher
         loginBut.setOnAction(value -> {
             try {
-                if (Server.anmelden(usr.getText())) {
+                dout.writeUTF("anmeldenPos;" + usr.getText());
+                dout.flush();
+                if (dit.readBoolean()) {
                     dout.writeUTF("anmelden;" + usr.getText());
+                    dout.flush();
+                    USER = usr.getText();
+
+                    dout.writeUTF("getMult;"+USER);
+                    MULT = dit.readInt();
+
+                    stage.setScene(scene2);
                 } else {
                     login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
                 }
