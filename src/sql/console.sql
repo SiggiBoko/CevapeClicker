@@ -5,7 +5,7 @@ use cevapeDB;
 create table if not exists USER(
     pk_usr int primary key auto_increment,
     username varchar(10)gi
-                               
+
 );
 
 create table if not exists PASSIV(
