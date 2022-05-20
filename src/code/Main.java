@@ -2,8 +2,6 @@ package code;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -11,21 +9,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.Buffer;
-import java.nio.file.Paths;
 
 
 public class Main extends Application {
-    private int cnt = 0;
+    private int CEVAPE;
     private int WIDTH = 1920;
     private int HEIGHT = 1080;
     private String USER;
+    private int USER_ID;
     private int MULT;
 
     DataOutputStream dout;
@@ -51,6 +47,7 @@ public class Main extends Application {
         login.setSpacing(10);
 
         TextField usr = new TextField();
+        usr.setPrefWidth(80);
         Button loginBut = new Button("Login");
 
         login.getChildren().addAll(usr, loginBut);
@@ -70,10 +67,9 @@ public class Main extends Application {
         imageView.setPickOnBounds(false);
         imageView.setOnMouseClicked((MouseEvent e) -> {
             try {
+                this.CEVAPE += 1 * MULT;
 
-                this.cnt += 1 * MULT;
-
-                cntText.setText(this.cnt + "");
+                cntText.setText(this.CEVAPE + "");
             }catch (Exception s){
                 s.printStackTrace();
             }
@@ -82,22 +78,42 @@ public class Main extends Application {
         cntText.setScaleX(10);
         cntText.setScaleY(20);
 
-        //cntText.setX(1920 / 2);
-        //cntText.setY(200);
+        Button mult1 = new Button("x1");
+        Button mult2 = new Button("x2");
+        Button mult3 = new Button("x3");
+        Button abmelden = new Button("abmelden");
 
-        //imageView.setX(1920 / 2 - image.getWidth() / 2);
-        //imageView.setY(1080 / 2 - image.getHeight() / 2);
+        mult1.setOnAction(e -> MULT = 1);
+        mult2.setOnAction(e -> MULT = 2);
+        mult3.setOnAction(e -> MULT = 3);
+        abmelden.setOnAction(e -> {
+            try {
+                dout.writeUTF("setCevape;"+ CEVAPE + ":" + USER_ID);
+                dout.flush();
+            }catch (Exception x){
+                x.printStackTrace();
+            }
+        });
 
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER);
-        hBox.getChildren().add(imageView);
+        //Boxen
+
 
         VBox mainVBox = new VBox();
         mainVBox.setAlignment(Pos.CENTER);
         mainVBox.setSpacing(200);
-        mainVBox.getChildren().addAll(cntText, hBox);
+        mainVBox.getChildren().addAll(cntText, imageView);
 
-        scene2 = new Scene(mainVBox, HEIGHT, WIDTH);
+        VBox multBox = new VBox();
+        multBox.setSpacing(20);
+        multBox.getChildren().addAll(mult1, mult2, mult3, abmelden);
+
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(100);
+        hBox.getChildren().addAll(mainVBox, multBox);
+
+
+        scene2 = new Scene(hBox,WIDTH, HEIGHT);
 
         //SceneSwitcher
         loginBut.setOnAction(value -> {
@@ -107,15 +123,24 @@ public class Main extends Application {
                 if (dit.readBoolean()) {
                     dout.writeUTF("anmelden;" + usr.getText());
                     dout.flush();
-                    USER = usr.getText();
-
-                    dout.writeUTF("getMult;"+USER);
-                    MULT = dit.readInt();
-
-                    stage.setScene(scene2);
-                } else {
-                    login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
                 }
+                USER = usr.getText();
+                dout.writeUTF("getKey;"+USER);
+                dout.flush();
+                USER_ID = Integer.parseInt(dit.readUTF());
+
+                dout.writeUTF("getMult;"+USER);
+                dout.flush();
+                MULT = dit.readInt();
+
+                dout.writeUTF("getCevape;"+USER);
+                dout.flush();
+                CEVAPE=dit.readInt();
+
+                stage.setScene(scene2);
+                //} else {
+                    //login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
+               // }
             }catch (IOException e){
                 e.printStackTrace();
             }

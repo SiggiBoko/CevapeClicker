@@ -4,8 +4,8 @@ use cevapeDB;
 
 create table if not exists USER(
     pk_usr int primary key auto_increment,
-    username varchar(10)gi
-
+    username varchar(10),
+    cevape int
 );
 
 create table if not exists PASSIV(
@@ -16,7 +16,7 @@ create table if not exists PASSIV(
 );
 
 INSERT INTO USER
-VALUE (1, 'Bogo');
+VALUE (1, 'Bogo', 0);
 
 INSERT INTO PASSIV
 VALUE (1, 1, 1);

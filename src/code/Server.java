@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 
+
+ */
 //import java.io.IOException;
 //
 //import javax.servlet.ServletException;
@@ -31,7 +33,7 @@ import org.json.JSONObject;
 //
 //import org.json.JSONObject;
 
-*/
+
 
 public class Server{
     private static int PORT_SRV = 22333;
@@ -45,24 +47,43 @@ public class Server{
             DataInputStream dis = new DataInputStream(client.getInputStream());
             DataOutputStream dout = new DataOutputStream(client.getOutputStream());
 
-
-            while (true){
+            while (schleife){
                 String[] cmd = dis.readUTF().split(";");
 
-                switch(cmd[0]){
-                    case "anmelden": anmelden(cmd[1]);
+                switch(cmd[0]) {
+                    case "anmelden":
+                        anmelden(cmd[1]);
+                        break;
                     case "anmeldenPos":
                         if(anmelden(cmd[1])){
                             dout.writeBoolean(true);
                             dout.flush();
+                            break;
                         }else {
                             dout.writeBoolean(false);
                             dout.flush();
-                        };
+                            break;
+                        }
                     case "getMult":
                         dout.writeInt(getMult(cmd[1]));
                         dout.flush();
-
+                        break;
+                    case "getCevape":
+                        dout.writeInt(getCevape(cmd[1]));
+                        dout.flush();
+                        break;
+                    case "setCevape":
+                        try {
+                            String[] temp = cmd[1].split(":");
+                            updateSQL("UPDATE USER SET cevape = " + temp[0] + " WHERE pk_usr=" + temp[1]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "getKey":
+                        dout.writeUTF(getKey(cmd[1]));
+                        dout.flush();
+                        break;
                 }
             }
         } catch (IOException e) {
@@ -99,10 +120,29 @@ public class Server{
         }
 
     }
+    private static int getCevape(String usr){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String myUrl = "jdbc:mysql://localhost/cevapeDB";
+
+            String key = getKey(usr);
+
+            Connection conn = DriverManager.getConnection(myUrl, "root", "");
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT cevape FROM user WHERE pk_usr = '" + key + "'");
+
+            if(rs.next()){
+                return rs.getInt("cevape");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     private static void addUsr(String usr) {
         try {
-            updateSQL("INSERT INTO USER (username) VALUE('" + usr + "');");
+            updateSQL("INSERT INTO USER (username, cevape) VALUE('" + usr + "', cevape);");
             Server.usr = sqlReadUser();
             updateSQL("INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(" + getKey(usr) + ", 1);");
         } catch (Exception e) {
