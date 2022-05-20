@@ -15,10 +15,4 @@ create table if not exists PASSIV(
     multiplikator int
 );
 
-INSERT INTO USER
-VALUE (1, 'Bogo', 0);
-
-INSERT INTO PASSIV
-VALUE (1, 1, 1);
-
 #INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(1, 1.0);

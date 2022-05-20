@@ -142,7 +142,7 @@ public class Server{
 
     private static void addUsr(String usr) {
         try {
-            updateSQL("INSERT INTO USER (username, cevape) VALUE('" + usr + "', cevape);");
+            updateSQL("INSERT INTO USER (username, cevape) VALUE('" + usr + "', 0);");
             Server.usr = sqlReadUser();
             updateSQL("INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(" + getKey(usr) + ", 1);");
         } catch (Exception e) {

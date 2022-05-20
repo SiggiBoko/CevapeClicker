@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.Socket;
 
+import static java.lang.Long.MAX_VALUE;
+
 
 public class Main extends Application {
     private int CEVAPE;
@@ -65,6 +67,7 @@ public class Main extends Application {
         Text cntText = new Text();
 
         imageView.setPickOnBounds(false);
+
         imageView.setOnMouseClicked((MouseEvent e) -> {
             try {
                 this.CEVAPE += 1 * MULT;
@@ -83,6 +86,11 @@ public class Main extends Application {
         Button mult3 = new Button("x3");
         Button abmelden = new Button("abmelden");
 
+        mult1.setPrefWidth(MAX_VALUE/2.0);
+        mult2.setPrefWidth(MAX_VALUE/2.0);
+        mult3.setPrefWidth(MAX_VALUE /2.0);
+        abmelden.setPrefWidth(MAX_VALUE / 2.0);
+
         mult1.setOnAction(e -> MULT = 1);
         mult2.setOnAction(e -> MULT = 2);
         mult3.setOnAction(e -> MULT = 3);
@@ -90,6 +98,7 @@ public class Main extends Application {
             try {
                 dout.writeUTF("setCevape;"+ CEVAPE + ":" + USER_ID);
                 dout.flush();
+                stage.setScene(scene1);
             }catch (Exception x){
                 x.printStackTrace();
             }
@@ -138,6 +147,7 @@ public class Main extends Application {
                 CEVAPE=dit.readInt();
 
                 stage.setScene(scene2);
+                cntText.setText(this.CEVAPE + "");
                 //} else {
                     //login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
                // }
