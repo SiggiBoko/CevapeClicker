@@ -41,6 +41,14 @@ public class Server{
                             dout.flush();
                             break;
                         }
+                    case "setMult":
+                        try {
+                            String[] temp = cmd[1].split(":");
+                            updateSQL("UPDATE PASSIV SET multiplikator = " + temp[0] + " WHERE fk_pk_usr = " + temp[1]);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        break;
                     case "getMult":
                         dout.writeInt(getMult(cmd[1]));
                         dout.flush();

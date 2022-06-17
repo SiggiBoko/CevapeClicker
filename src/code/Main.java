@@ -9,10 +9,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -21,8 +21,8 @@ import static java.lang.Long.MAX_VALUE;
 
 public class Main extends Application {
     private int CEVAPE;
-    private int WIDTH = 1200;
-    private int HEIGHT = 720;
+    private int WIDTH = 800;
+    private int HEIGHT = 800;
     private String USER;
     private int USER_ID;
     private int MULT;
@@ -74,7 +74,7 @@ public class Main extends Application {
                 this.CEVAPE += 1 * MULT;
 
                 cntText.setText(this.CEVAPE + "");
-            }catch (Exception s){
+            } catch (Exception s) {
                 s.printStackTrace();
             }
         });
@@ -82,32 +82,50 @@ public class Main extends Application {
         cntText.setScaleX(10);
         cntText.setScaleY(20);
 
-        Button mult1 = new Button("x1");
-        Button mult2 = new Button("x2");
-        Button mult3 = new Button("x3");
+        Button mult1 = new Button("x2\n100 Cevape");
+        Button mult2 = new Button("x3\n300 Cevape");
+        Button mult3 = new Button("x4\n1000 Cevape");
         Button abmelden = new Button("abmelden");
 
-        mult1.setPrefWidth(MAX_VALUE/2.0);
-        mult2.setPrefWidth(MAX_VALUE/2.0);
-        mult3.setPrefWidth(MAX_VALUE /2.0);
+        mult1.setPrefWidth(MAX_VALUE / 2.0);
+        mult2.setPrefWidth(MAX_VALUE / 2.0);
+        mult3.setPrefWidth(MAX_VALUE / 2.0);
         abmelden.setPrefWidth(MAX_VALUE / 2.0);
 
-        mult1.setOnAction(e -> MULT = 1);
-        mult2.setOnAction(e -> MULT = 2);
-        mult3.setOnAction(e -> MULT = 3);
+        mult1.setOnAction(e -> {
+            if (Integer.parseInt(cntText.getText()) >= 100 && MULT < 2) {
+                MULT = 2;
+                cntText.setText(Integer.parseInt(cntText.getText()) - 100 + "");
+                this.CEVAPE = Integer.parseInt(cntText.getText());
+            }
+        });
+        mult2.setOnAction(e -> {
+            if (Integer.parseInt(cntText.getText()) >= 300 && MULT < 3) {
+                MULT = 3;
+                cntText.setText(Integer.parseInt(cntText.getText()) - 300 + "");
+                this.CEVAPE = Integer.parseInt(cntText.getText());
+            }
+        });
+        mult3.setOnAction(e -> {
+            if (Integer.parseInt(cntText.getText()) >= 1000 && MULT < 4) {
+                MULT = 4;
+                cntText.setText(Integer.parseInt(cntText.getText()) - 1000 + "");
+                this.CEVAPE = Integer.parseInt(cntText.getText());
+            }
+        });
         abmelden.setOnAction(e -> {
             try {
-                dout.writeUTF("setCevape;"+ CEVAPE + ":" + USER_ID);
+                dout.writeUTF("setCevape;" + CEVAPE + ":" + USER_ID);
+                dout.flush();
+                dout.writeUTF("setMult;" + MULT + ":" + USER_ID);
                 dout.flush();
                 stage.setScene(scene1);
-            }catch (Exception x){
+            } catch (Exception x) {
                 x.printStackTrace();
             }
         });
 
         //Boxen
-
-
         HBox cntBox = new HBox();
         cntBox.setAlignment(Pos.CENTER);
         cntBox.getChildren().addAll(cntText);
@@ -129,7 +147,7 @@ public class Main extends Application {
         hBox.setSpacing(100);
         hBox.getChildren().addAll(mainVBox, multBox);
 
-        GridPane gp = new GridPane();
+        /*GridPane gp = new GridPane();
         gp.setGridLinesVisible(true);
         gp.setHgap(10);
         gp.setVgap(10);
@@ -137,17 +155,15 @@ public class Main extends Application {
         gp.add(multBox, 1, 0);
 
 
-        /*BorderPane bp = new BorderPane();
+        BorderPane bp = new BorderPane();
         bp.setCenter(mainVBox);
         bp.setRight(multBox);
         bp.setMaxWidth(200);
 
         bp.setAlignment(mainVBox, Pos.CENTER_RIGHT);
         bp.setAlignment(multBox, Pos.CENTER);
-
-
          */
-        scene2 = new Scene(gp,WIDTH, HEIGHT);
+        scene2 = new Scene(hBox, WIDTH, HEIGHT);
 
 
         //SceneSwitcher
@@ -160,24 +176,24 @@ public class Main extends Application {
                     dout.flush();
                 }
                 USER = usr.getText();
-                dout.writeUTF("getKey;"+USER);
+                dout.writeUTF("getKey;" + USER);
                 dout.flush();
                 USER_ID = Integer.parseInt(dit.readUTF());
 
-                dout.writeUTF("getMult;"+USER);
+                dout.writeUTF("getMult;" + USER);
                 dout.flush();
                 MULT = dit.readInt();
 
-                dout.writeUTF("getCevape;"+USER);
+                dout.writeUTF("getCevape;" + USER);
                 dout.flush();
-                CEVAPE=dit.readInt();
+                CEVAPE = dit.readInt();
 
                 stage.setScene(scene2);
                 cntText.setText(this.CEVAPE + "");
                 //} else {
-                    //login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
-               // }
-            }catch (IOException e){
+                //login.getChildren().add(new Text("Dieser Name ist bereits vergeben!"));
+                // }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });

@@ -16,3 +16,4 @@ create table if not exists PASSIV(
 );
 
 #INSERT INTO PASSIV (fk_pk_usr, multiplikator) VALUE(1, 1.0);
+UPDATE USER SET cevape = 1000 WHERE pk_usr = 2;
